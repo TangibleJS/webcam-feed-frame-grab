@@ -57,7 +57,8 @@ function onWebcamSelected() {
 
   // Attach the webcam feed to a video element so we can view it
   navigator.mediaDevices.getUserMedia(constraints)
-    .then(stream => videoElement.srcObject = stream);
+    .then(stream => videoElement.srcObject = stream)
+    .catch(err => alert(err))
 
 }
 
