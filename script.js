@@ -13,7 +13,7 @@ function getWebcams() {
       .then(devices => {
 
         let filtered = devices.filter((device) => {
-          return device.kind === "videoinput"
+          return device.kind === "videXXXoinput"
         });
 
         resolve(filtered);
