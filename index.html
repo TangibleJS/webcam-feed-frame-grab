@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+  <html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Viewing a Webcam Feed and Grabbing Frames with the MediaDevices API</title>
+    <style>
+      #webcam, #capture {
+        display: inline-block;
+        border: solid 1px black;
+        width: 320px;
+        height: 240px
+      }
+      #webcam{ transform: scaleX(-1); }
+      #dropdown { display: block; }
+    </style>
+  </head>
+
+  <body>
+    <p><select name="dropdown" id="dropdown"></select></p>
+    <video id="webcam"></video>
+    <canvas id="capture" width="320" height="240"></canvas>
+    <p>Click the video feed to capture a frame!</p>
+    <script src="script.js"></script>
+  </body>
+
+</html>
