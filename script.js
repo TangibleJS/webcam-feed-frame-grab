@@ -13,27 +13,30 @@ function getWebcams() {
       .then(devices => {
 
         let filtered = devices.filter((device) => {
-          return device.kind === "videXXXoinput"
+          return device.kind === "videoinput"
         });
 
         resolve(filtered);
 
       })
-      .catch(err => console.log(err));
+      .catch(err => alert(err.name))
 
   });
 
 }
 
 function populateDropDownMenu(webcams) {
-
   let dropdown = document.getElementById("dropdown");
 
   webcams.forEach((cam) => {
+
+    // Prepare option. Note that the label is only available over...
     let option = document.createElement("option");
-    option.text = cam.label;
+    option.text = cam.label || cam.deviceId;
     option.value = cam.deviceId;
+
     dropdown.options.add(option);
+
   });
 
   dropdown.addEventListener("change", onWebcamSelected)
@@ -58,8 +61,10 @@ function onWebcamSelected() {
 
   // Attach the webcam feed to a video element so we can view it
   navigator.mediaDevices.getUserMedia(constraints)
-    .then(stream => videoElement.srcObject = stream)
-    .catch(err => alert(err))
+    .then(stream => {
+      videoElement.srcObject = stream;
+    })
+    .catch(err => alert(err.name))
 
 }
 
@@ -114,7 +119,7 @@ function captureToCanvas() {
 
 getWebcams()
   .then(populateDropDownMenu)
-  .then(onWebcamSelected);
+  // .then(onWebcamSelected);
 
 document.getElementById("webcam").addEventListener("click", () => {
   captureToCanvas();
