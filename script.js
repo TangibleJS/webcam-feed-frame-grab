@@ -1,36 +1,55 @@
+/**
+ * If the domain has not yet been authorized, this function will trigger the webcam authorization
+ * prompt. It also checks to see if the MediaDevices API is available.
+ *
+ * @return {Promise}
+ */
+function triggerAuthorizationPrompt() {
+
+  // Check for MediaDevices support
+  if (!navigator.mediaDevices) {
+    throw new Error("The MediaDevices API is not supported.");
+  }
+
+  return navigator.mediaDevices.getUserMedia({video: true});
+
+}
+
+/**
+ * Returns a Promise object fulfilled with an array of all "videoinput" devices (webcams) currently
+ * available.
+ *
+ * Note: calling enumerateDevices() does NOT prompt the user for authorization. However, if the
+ * domain has not already been authorized, the device's labels will be empty (for security reasons).
+ *
+ * @return {Promise}
+ */
 function getWebcams() {
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
 
-    // Check for MediaDevices support
-    if (!navigator.mediaDevices) {
-      reject(new Error("The MediaDevices API is not supported."));
-      return;
-    }
-
-    // Filter found devices to only keep "videoinput" devices
     navigator.mediaDevices.enumerateDevices()
       .then(devices => {
 
+        // Filter found devices to only keep "videoinput" devices
         let filtered = devices.filter((device) => {
           return device.kind === "videoinput"
         });
 
         resolve(filtered);
 
-      })
+      });
 
   });
 
 }
 
 function populateDropDownMenu(webcams) {
-
   let dropdown = document.getElementById("dropdown");
 
   webcams.forEach((cam) => {
     let option = document.createElement("option");
-    option.text = cam.label;
+    option.text = cam.label || cam.deviceId;
     option.value = cam.deviceId;
     dropdown.options.add(option);
   });
@@ -57,8 +76,10 @@ function onWebcamSelected() {
 
   // Attach the webcam feed to a video element so we can view it
   navigator.mediaDevices.getUserMedia(constraints)
-    .then(stream => videoElement.srcObject = stream)
-    .catch(err => alert(err))
+    .then(stream => {
+      videoElement.srcObject = stream;
+    })
+    .catch(err => alert(err.name))
 
 }
 
@@ -111,9 +132,11 @@ function captureToCanvas() {
 
 }
 
-getWebcams()
+triggerAuthorizationPrompt()
+  .then(getWebcams)
   .then(populateDropDownMenu)
-  .then(onWebcamSelected);
+  .then(onWebcamSelected)
+  .catch(err => alert(err));
 
 document.getElementById("webcam").addEventListener("click", () => {
   captureToCanvas();
