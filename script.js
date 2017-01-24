@@ -19,6 +19,7 @@ function getWebcams() {
         resolve(filtered);
 
       })
+      .catch(err => alert(err))
 
   });
 
